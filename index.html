@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thompsons For Travel | Destination Training Deck Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Open+Sans:wght@400;600&family=Space+Mono&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<style>
+  :root{
+    --navy:#0A52A0;
+    --cyan:#00AEEF;
+    --white:#FFFFFF;
+    --bg:#F4F8FC;
+    --border:#DCE8F5;
+    --ink:#1B2B3A;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Open Sans', Arial, sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+  }
+  header{
+    background:var(--navy);
+    padding:28px 40px;
+    border-radius:0 0 16px 16px;
+  }
+  header h1{
+    margin:0;
+    font-family:'Nunito', Arial, sans-serif;
+    font-weight:800;
+    font-size:26px;
+    letter-spacing:0.3px;
+    color:var(--white);
+  }
+  header p{
+    margin:6px 0 0;
+    color:var(--cyan);
+    font-family:'Open Sans', sans-serif;
+    font-size:14px;
+  }
+  main{
+    max-width:900px;
+    margin:0 auto;
+    padding:32px 24px 100px;
+  }
+  .card{
+    background:var(--white);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:24px;
+    margin-bottom:20px;
+  }
+  .card h2{
+    font-size:18px;
+    margin:0 0 4px;
+    color:var(--ink);
+  }
+  .card .hint{
+    font-family:Arial, sans-serif;
+    font-size:13px;
+    color:#8A8378;
+    margin-bottom:16px;
+  }
+  label{
+    display:block;
+    font-family:Arial, sans-serif;
+    font-size:12px;
+    font-weight:bold;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:#8A8378;
+    margin-bottom:4px;
+    margin-top:12px;
+  }
+  input[type=text], textarea, input[type=date]{
+    width:100%;
+    padding:9px 10px;
+    border:1px solid var(--border);
+    border-radius:4px;
+    font-family:Arial, sans-serif;
+    font-size:14px;
+    color:var(--ink);
+  }
+  textarea{min-height:56px; resize:vertical;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;}
+  .item-block{
+    border:1px dashed var(--border);
+    border-radius:5px;
+    padding:14px;
+    margin-top:12px;
+    position:relative;
+    background:#FCFBFA;
+  }
+  .item-block .remove{
+    position:absolute;
+    top:10px;
+    right:10px;
+    background:none;
+    border:none;
+    color:#B4534B;
+    font-family:Arial, sans-serif;
+    font-size:12px;
+    cursor:pointer;
+    font-weight:bold;
+  }
+  .add-btn{
+    font-family:Arial, sans-serif;
+    font-size:13px;
+    font-weight:bold;
+    color:var(--navy);
+    background:none;
+    border:1.5px solid var(--navy);
+    border-radius:4px;
+    padding:8px 14px;
+    cursor:pointer;
+    margin-top:14px;
+  }
+  .add-btn:hover{background:var(--navy); color:var(--white);}
+  .section-toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:24px;
+    background:var(--white);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:18px;
+  }
+  .section-toolbar button{
+    font-family:Arial, sans-serif;
+    font-size:13px;
+    background:var(--ink);
+    color:var(--white);
+    border:none;
+    border-radius:4px;
+    padding:9px 14px;
+    cursor:pointer;
+  }
+  .section-toolbar button:hover{background:var(--navy);}
+  #sections{display:flex; flex-direction:column; gap:16px;}
+  .section-card{
+    background:var(--white);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:22px;
+  }
+  .section-card .section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:6px;
+  }
+  .section-card .section-head .tag{
+    font-family:Arial, sans-serif;
+    font-size:11px;
+    font-weight:bold;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:var(--white);
+    background:var(--cyan);
+    padding:3px 9px;
+    border-radius:3px;
+  }
+  .section-card .section-controls button{
+    font-family:Arial, sans-serif;
+    font-size:12px;
+    background:none;
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:5px 10px;
+    cursor:pointer;
+    margin-left:6px;
+    color:var(--ink);
+  }
+  .section-card .section-controls button.danger{color:#B4534B; border-color:#E7C6C3;}
+  .file-drop{
+    border:2px dashed var(--border);
+    border-radius:5px;
+    padding:12px;
+    text-align:center;
+    font-family:Arial, sans-serif;
+    font-size:12px;
+    color:#8A8378;
+    margin-top:8px;
+    cursor:pointer;
+  }
+  .thumb{max-width:100%; max-height:90px; border-radius:4px; margin-top:8px; display:block;}
+  #generate-bar{
+    position:fixed;
+    bottom:0; left:0; right:0;
+    background:var(--white);
+    border-top:2px solid var(--navy);
+    padding:16px 24px;
+    display:flex;
+    justify-content:center;
+    gap:16px;
+    align-items:center;
+  }
+  #generate-btn{
+    font-family:Arial, sans-serif;
+    font-size:15px;
+    font-weight:bold;
+    background:var(--navy);
+    color:var(--white);
+    border:none;
+    border-radius:5px;
+    padding:14px 32px;
+    cursor:pointer;
+  }
+  #generate-btn:hover{background:#B87D1E;}
+  #status{font-family:Arial, sans-serif; font-size:13px; color:#8A8378;}
+  .empty-note{
+    font-family:Arial, sans-serif;
+    font-size:13px;
+    color:#8A8378;
+    text-align:center;
+    padding:40px 20px;
+    border:1px dashed var(--border);
+    border-radius:6px;
+    background:var(--white);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Thompsons For Travel | Destination Training Deck Generator</h1>
+  <p>Fill in what you know from the trip. Add photos. Build the deck. No PowerPoint required.</p>
+</header>
+
+<main>
+
+  <div class="card">
+    <h2>Cover</h2>
+    <div class="hint">This becomes slide 1.</div>
+    <div class="row2">
+      <div>
+        <label>Destination / Trip Name</label>
+        <input type="text" id="cover-destination" placeholder="e.g. Greece">
+      </div>
+      <div>
+        <label>Deck Type</label>
+        <input type="text" id="cover-triptype" value="Destination Training" placeholder="e.g. Destination Training, Consultant Training">
+      </div>
+    </div>
+    <div class="row2">
+      <div>
+        <label>Contributor</label>
+        <input type="text" id="cover-compiledby" placeholder="Your name">
+      </div>
+      <div>
+        <label>Trip Dates</label>
+        <input type="text" id="cover-dates" placeholder="e.g. 28 Sep - 6 Oct">
+      </div>
+    </div>
+    <label>Hero Photo</label>
+    <input type="file" id="cover-photo" accept="image/*">
+    <img class="thumb" id="cover-photo-thumb" style="display:none;">
+  </div>
+
+  <div class="section-toolbar">
+    <span style="font-family:Arial, sans-serif; font-size:13px; color:#8A8378; align-self:center; margin-right:6px;">Add a section:</span>
+    <button onclick="addSection('snapshot')">+ Fact Snapshot</button>
+    <button onclick="addSection('area')">+ Area / Topic Card</button>
+    <button onclick="addSection('gallery')">+ Photo Gallery</button>
+    <button onclick="addSection('itinerary')">+ Itinerary / Route</button>
+    <button onclick="addSection('logistics')">+ Logistics Q&amp;A</button>
+  </div>
+
+  <datalist id="caption-presets">
+    <option value="Hero shot, the one that sells it">
+    <option value="Landscape / view">
+    <option value="Food or culture">
+    <option value="People / experience">
+  </datalist>
+
+  <div id="sections"></div>
+  <div id="empty-note" class="empty-note">No sections added yet. Use the buttons above, add as many or as few as this trip needs, in any order.</div>
+
+</main>
+
+<div id="generate-bar">
+  <button id="generate-btn" onclick="generateDeck()">Generate .pptx</button>
+  <span id="status"></span>
+</div>
+
+<script>
+const BRAND = {
+  ink: "1B2B3A",
+  cyan: "00AEEF",
+  navy: "0A52A0",
+  white: "FFFFFF"
+};
+
+let sectionCounter = 0;
+const sections = []; // {id, type, el}
+
+function uid(){ return 's' + (sectionCounter++); }
+
+function fileToDataUrl(file, cb){
+  const reader = new FileReader();
+  reader.onload = () => cb(reader.result);
+  reader.readAsDataURL(file);
+}
+
+document.getElementById('cover-photo').addEventListener('change', function(e){
+  const f = e.target.files[0];
+  if(!f) return;
+  fileToDataUrl(f, (url) => {
+    const img = document.getElementById('cover-photo-thumb');
+    img.src = url;
+    img.style.display = 'block';
+    img.dataset.dataurl = url;
+  });
+});
+
+function updateEmptyNote(){
+  document.getElementById('empty-note').style.display = sections.length ? 'none' : 'block';
+}
+
+function removeSection(id){
+  const idx = sections.findIndex(s => s.id === id);
+  if(idx === -1) return;
+  sections[idx].el.remove();
+  sections.splice(idx, 1);
+  updateEmptyNote();
+}
+
+function addSection(type){
+  const id = uid();
+  const wrap = document.createElement('div');
+  wrap.className = 'section-card';
+  wrap.dataset.id = id;
+  wrap.dataset.type = type;
+
+  const labels = {
+    snapshot: 'FACT SNAPSHOT',
+    area: 'AREA / TOPIC CARD',
+    gallery: 'PHOTO GALLERY',
+    itinerary: 'ITINERARY / ROUTE',
+    logistics: 'LOGISTICS Q&A'
+  };
+
+  wrap.innerHTML = `
+    <div class="section-head">
+      <span class="tag">${labels[type]}</span>
+      <span class="section-controls">
+        <button onclick="removeSection('${id}')" class="danger">Remove section</button>
+      </span>
+    </div>
+    <div class="section-body"></div>
+  `;
+
+  const body = wrap.querySelector('.section-body');
+  buildSectionBody(type, body);
+
+  document.getElementById('sections').appendChild(wrap);
+  sections.push({id, type, el: wrap});
+  updateEmptyNote();
+}
+
+function buildSectionBody(type, body){
+  if(type === 'snapshot'){
+    body.innerHTML = `
+      <label>Snapshot Title</label>
+      <input type="text" class="f-title" placeholder="e.g. Destination Snapshot">
+      <div class="rows"></div>
+      <button class="add-btn" onclick="addSnapshotRow(this)">+ Add fact</button>
+    `;
+    addSnapshotRow(body.querySelector('.add-btn'));
+    addSnapshotRow(body.querySelector('.add-btn'));
+  }
+  else if(type === 'area'){
+    body.innerHTML = `
+      <label>Area / Topic Name</label>
+      <input type="text" class="f-title" placeholder="e.g. Athens">
+      <div class="rows"></div>
+      <button class="add-btn" onclick="addAreaFactRow(this)">+ Add fact line</button>
+      <label>Your Honest Take</label>
+      <textarea class="f-note" placeholder="What surprised you, what you'd tell a client..."></textarea>
+    `;
+    addAreaFactRow(body.querySelector('.add-btn'));
+    addAreaFactRow(body.querySelector('.add-btn'));
+  }
+  else if(type === 'gallery'){
+    body.innerHTML = `
+      <label>Gallery Title</label>
+      <input type="text" class="f-title" value="In Pictures" placeholder="e.g. Greece in Pictures">
+      <div class="rows"></div>
+      <button class="add-btn" onclick="addGalleryPhoto(this)">+ Add photo</button>
+    `;
+    addGalleryPhoto(body.querySelector('.add-btn'));
+    addGalleryPhoto(body.querySelector('.add-btn'));
+    addGalleryPhoto(body.querySelector('.add-btn'));
+  }
+  else if(type === 'itinerary'){
+    body.innerHTML = `
+      <label>Itinerary Title</label>
+      <input type="text" class="f-title" value="Itinerary at a Glance" placeholder="e.g. Itinerary at a Glance">
+      <div class="rows"></div>
+      <button class="add-btn" onclick="addItineraryStop(this)">+ Add stop</button>
+    `;
+    addItineraryStop(body.querySelector('.add-btn'));
+    addItineraryStop(body.querySelector('.add-btn'));
+  }
+  else if(type === 'logistics'){
+    body.innerHTML = `
+      <label>Logistics Title</label>
+      <input type="text" class="f-title" value="Getting There & Logistics" placeholder="e.g. Self-Drive Essentials">
+      <div class="rows"></div>
+      <button class="add-btn" onclick="addLogisticsItem(this)">+ Add topic</button>
+    `;
+    addLogisticsItem(body.querySelector('.add-btn'));
+    addLogisticsItem(body.querySelector('.add-btn'));
+  }
+}
+
+function removeItemBlock(btn){
+  btn.closest('.item-block').remove();
+}
+
+function addSnapshotRow(addBtn){
+  const rows = addBtn.previousElementSibling;
+  const div = document.createElement('div');
+  div.className = 'item-block f-snapshot-row';
+  div.innerHTML = `
+    <button class="remove" onclick="removeItemBlock(this)">Remove</button>
+    <div class="row2">
+      <div><label>Label</label><input type="text" class="k-label" placeholder="e.g. Best Season"></div>
+      <div><label>Value</label><input type="text" class="k-value" placeholder="e.g. May-June or Sept"></div>
+    </div>
+  `;
+  rows.appendChild(div);
+}
+
+function addAreaFactRow(addBtn){
+  const rows = addBtn.previousElementSibling;
+  const div = document.createElement('div');
+  div.className = 'item-block f-area-fact';
+  div.innerHTML = `
+    <button class="remove" onclick="removeItemBlock(this)">Remove</button>
+    <label>Fact Line</label>
+    <input type="text" class="k-fact" placeholder="e.g. Home to the Acropolis and Parthenon, over 2,400 years old">
+  `;
+  rows.appendChild(div);
+}
+
+function addGalleryPhoto(addBtn){
+  const rows = addBtn.previousElementSibling;
+  const div = document.createElement('div');
+  div.className = 'item-block f-gallery-photo';
+  div.innerHTML = `
+    <button class="remove" onclick="removeItemBlock(this)">Remove</button>
+    <div class="row2">
+      <div>
+        <label>Caption</label>
+        <input type="text" class="k-caption" list="caption-presets" placeholder="e.g. Hero shot, the one that sells it">
+        <label>Photo</label>
+        <input type="file" class="k-file" accept="image/*">
+      </div>
+      <div><img class="thumb k-thumb" style="display:none;"></div>
+    </div>
+  `;
+  div.querySelector('.k-file').addEventListener('change', function(e){
+    const f = e.target.files[0];
+    if(!f) return;
+    fileToDataUrl(f, (url) => {
+      const img = div.querySelector('.k-thumb');
+      img.src = url;
+      img.style.display = 'block';
+      img.dataset.dataurl = url;
+    });
+  });
+  rows.appendChild(div);
+}
+
+function addItineraryStop(addBtn){
+  const rows = addBtn.previousElementSibling;
+  const div = document.createElement('div');
+  div.className = 'item-block f-itinerary-stop';
+  div.innerHTML = `
+    <button class="remove" onclick="removeItemBlock(this)">Remove</button>
+    <label>Leg (from - to, transport)</label>
+    <input type="text" class="k-leg" placeholder="e.g. Athens to Santorini (domestic flight)">
+    <div class="row2">
+      <div><label>Date</label><input type="text" class="k-date" placeholder="e.g. 28 Sep"></div>
+      <div><label>Nights</label><input type="text" class="k-nights" placeholder="e.g. 2 nights"></div>
+    </div>
+  `;
+  rows.appendChild(div);
+}
+
+function addLogisticsItem(addBtn){
+  const rows = addBtn.previousElementSibling;
+  const div = document.createElement('div');
+  div.className = 'item-block f-logistics-item';
+  div.innerHTML = `
+    <button class="remove" onclick="removeItemBlock(this)">Remove</button>
+    <label>Topic</label>
+    <input type="text" class="k-topic" placeholder="e.g. Vehicle, Road Conditions, Visa Requirements">
+    <label>Notes</label>
+    <textarea class="k-answer" placeholder="Your notes on this topic"></textarea>
+  `;
+  rows.appendChild(div);
+}
+
+// ---------- DECK GENERATION ----------
+
+function generateDeck(){
+  const status = document.getElementById('status');
+
+  if(typeof PptxGenJS === 'undefined'){
+    status.textContent = 'The PowerPoint library did not load, check your internet connection and refresh the page.';
+    return;
+  }
+
+  status.textContent = 'Building deck...';
+
+  const pres = new PptxGenJS();
+  pres.layout = 'LAYOUT_WIDE'; // 13.3 x 7.5
+
+  const destination = document.getElementById('cover-destination').value || 'Destination';
+  const tripType = document.getElementById('cover-triptype').value || 'Training Reference';
+  const compiledBy = document.getElementById('cover-compiledby').value || '';
+  const dates = document.getElementById('cover-dates').value || '';
+  const coverPhoto = document.getElementById('cover-photo-thumb').dataset.dataurl || null;
+
+  addFooter_placeholder(); // no-op, footer added per-slide below
+
+  buildCoverSlide(pres, {destination, tripType, compiledBy, dates, coverPhoto});
+
+  sections.forEach(s => {
+    const body = s.el.querySelector('.section-body');
+    if(s.type === 'snapshot') buildSnapshotSlide(pres, readSnapshot(body), destination);
+    else if(s.type === 'area') buildAreaSlide(pres, readArea(body), destination);
+    else if(s.type === 'gallery') buildGallerySlides(pres, readGallery(body), destination);
+    else if(s.type === 'itinerary') buildItinerarySlide(pres, readItinerary(body), destination);
+    else if(s.type === 'logistics') buildLogisticsSlide(pres, readLogistics(body), destination);
+  });
+
+  const filename = (destination || 'T4T_Destination_Training_Deck').replace(/[^a-z0-9]+/gi, '_') + '.pptx';
+  pres.writeFile({ fileName: filename }).then(() => {
+    status.textContent = 'Done, check your downloads.';
+  }).catch(err => {
+    console.error(err);
+    status.textContent = 'Something went wrong, see console.';
+  });
+}
+
+function addFooter_placeholder(){ /* intentional no-op, kept for readability of generateDeck */ }
+
+function footer(slide, destination){
+  slide.addText('Thompsons For Travel  |  Consultant Training', {
+    x:0.4, y:7.15, w:8, h:0.3, fontFace:'Open Sans', fontSize:9, color:BRAND.cyan
+  });
+}
+
+function readSnapshot(body){
+  const title = body.querySelector('.f-title').value || 'Snapshot';
+  const rows = [...body.querySelectorAll('.f-snapshot-row')].map(r => ({
+    label: r.querySelector('.k-label').value,
+    value: r.querySelector('.k-value').value
+  })).filter(r => r.label || r.value);
+  return {title, rows};
+}
+
+function readArea(body){
+  const title = body.querySelector('.f-title').value || 'Area Overview';
+  const facts = [...body.querySelectorAll('.f-area-fact')].map(r => r.querySelector('.k-fact').value).filter(Boolean);
+  const note = body.querySelector('.f-note').value || '';
+  return {title, facts, note};
+}
+
+function readGallery(body){
+  const title = body.querySelector('.f-title').value || 'In Pictures';
+  const photos = [...body.querySelectorAll('.f-gallery-photo')].map(r => ({
+    caption: r.querySelector('.k-caption').value,
+    dataurl: r.querySelector('.k-thumb').dataset.dataurl || null
+  })).filter(p => p.dataurl || p.caption);
+  return {title, photos};
+}
+
+function readItinerary(body){
+  const title = body.querySelector('.f-title').value || 'Itinerary at a Glance';
+  const stops = [...body.querySelectorAll('.f-itinerary-stop')].map(r => ({
+    leg: r.querySelector('.k-leg').value,
+    date: r.querySelector('.k-date').value,
+    nights: r.querySelector('.k-nights').value
+  })).filter(s => s.leg);
+  return {title, stops};
+}
+
+function readLogistics(body){
+  const title = body.querySelector('.f-title').value || 'Logistics';
+  const items = [...body.querySelectorAll('.f-logistics-item')].map(r => ({
+    topic: r.querySelector('.k-topic').value,
+    answer: r.querySelector('.k-answer').value
+  })).filter(i => i.topic || i.answer);
+  return {title, items};
+}
+
+// ---- slide builders ----
+
+function buildCoverSlide(pres, d){
+  const slide = pres.addSlide();
+  slide.background = { color: BRAND.white };
+
+  if(d.coverPhoto){
+    slide.addImage({ data: d.coverPhoto, x:6.6, y:0, w:6.7, h:7.5, sizing:{type:'cover', w:6.7, h:7.5} });
+  } else {
+    slide.addShape('rect', { x:6.6, y:0, w:6.7, h:7.5, fill:{color:BRAND.cyan} });
+  }
+
+  slide.addShape('rect', { x:0, y:0, w:6.6, h:7.5, fill:{color:BRAND.white} });
+  slide.addText(d.destination.toUpperCase() + '  |  ' + d.tripType.toUpperCase(), {
+    x:0.6, y:2.7, w:5.6, h:1.2, fontFace:'Nunito', fontSize:26, bold:true, color:BRAND.ink, valign:'bottom'
+  });
+  slide.addText('Training Reference', {
+    x:0.6, y:3.95, w:5.6, h:0.5, fontFace:'Open Sans', fontSize:14, color:BRAND.navy, bold:true
+  });
+  slide.addText(`Compiled by: ${d.compiledBy}\nTrip dates: ${d.dates}`, {
+    x:0.6, y:6.3, w:5.6, h:0.8, fontFace:'Open Sans', fontSize:12, color:BRAND.cyan, lineSpacingMultiple:1.4
+  });
+  footer(slide, d.destination);
+}
+
+function buildSnapshotSlide(pres, s, destination){
+  const slide = pres.addSlide();
+  slide.background = { color: BRAND.white };
+  slide.addText(s.title, { x:0.5, y:0.4, w:12.3, h:0.7, fontFace:'Nunito', fontSize:24, bold:true, color:BRAND.ink });
+
+  const cols = 3;
+  const gap = 0.3;
+  const cardW = (12.3 - gap*(cols-1)) / cols;
+  const cardH = 1.5;
+  s.rows.forEach((r, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const x = 0.5 + col*(cardW+gap);
+    const y = 1.4 + row*(cardH+gap);
+    slide.addShape('roundRect', { x, y, w:cardW, h:cardH, fill:{color:'F4F8FC'}, line:{color:'DCE8F5', width:1}, rectRadius:0.12 });
+    slide.addText(r.label.toUpperCase(), { x:x+0.2, y:y+0.15, w:cardW-0.4, h:0.35, fontFace:'Open Sans', fontSize:10, bold:true, color:BRAND.navy });
+    slide.addText(r.value, { x:x+0.2, y:y+0.5, w:cardW-0.4, h:0.9, fontFace:'Open Sans', fontSize:13, color:BRAND.ink, valign:'top' });
+  });
+  footer(slide, destination);
+}
+
+function buildAreaSlide(pres, a, destination){
+  const slide = pres.addSlide();
+  slide.background = { color: BRAND.white };
+  slide.addText(a.title, { x:0.5, y:0.4, w:12.3, h:0.7, fontFace:'Nunito', fontSize:24, bold:true, color:BRAND.ink });
+
+  let y = 1.35;
+  a.facts.forEach(f => {
+    slide.addShape('ellipse', { x:0.55, y:y+0.09, w:0.09, h:0.09, fill:{color:BRAND.navy} });
+    slide.addText(f, { x:0.85, y:y-0.05, w:11.9, h:0.4, fontFace:'Open Sans', fontSize:13, color:BRAND.ink });
+    y += 0.42;
+  });
+
+  if(a.note){
+    const noteY = Math.max(y + 0.3, 4.6);
+    slide.addShape('roundRect', { x:0.5, y:noteY, w:12.3, h:7.0-noteY-0.5, fill:{color:'F4F8FC'}, line:{width:0}, rectRadius:0.12 });
+    slide.addText('YOUR TAKE', { x:0.8, y:noteY+0.2, w:11.7, h:0.3, fontFace:'Open Sans', fontSize:10, bold:true, color:BRAND.navy });
+    slide.addText(a.note, { x:0.8, y:noteY+0.55, w:11.7, h:7.0-noteY-1.0, fontFace:'Open Sans', fontSize:13, color:BRAND.ink, valign:'top' });
+  }
+  footer(slide, destination);
+}
+
+function buildGallerySlides(pres, g, destination){
+  const perSlide = 3;
+  for(let i=0; i<g.photos.length; i += perSlide){
+    const chunk = g.photos.slice(i, i+perSlide);
+    const slide = pres.addSlide();
+    slide.background = { color: BRAND.white };
+    slide.addText(g.title, { x:0.5, y:0.4, w:12.3, h:0.7, fontFace:'Nunito', fontSize:24, bold:true, color:BRAND.ink });
+
+    const gap = 0.3;
+    const w = (12.3 - gap*(chunk.length-1)) / chunk.length;
+    const h = 4.6;
+    chunk.forEach((p, idx) => {
+      const x = 0.5 + idx*(w+gap);
+      const y = 1.4;
+      if(p.dataurl){
+        slide.addImage({ data:p.dataurl, x, y, w, h, sizing:{type:'cover', w, h} });
+      } else {
+        slide.addShape('rect', { x, y, w, h, fill:{color:'DCE8F5'} });
+      }
+      if(p.caption){
+        slide.addText(p.caption, { x, y:y+h+0.1, w, h:0.4, fontFace:'Open Sans', fontSize:11, color:BRAND.cyan, align:'center' });
+      }
+    });
+    footer(slide, destination);
+  }
+}
+
+function buildItinerarySlide(pres, it, destination){
+  const slide = pres.addSlide();
+  slide.background = { color: BRAND.white };
+  slide.addText(it.title, { x:0.5, y:0.4, w:12.3, h:0.7, fontFace:'Nunito', fontSize:24, bold:true, color:BRAND.ink });
+
+  let y = 1.5;
+  it.stops.forEach((s, i) => {
+    slide.addShape('ellipse', { x:0.5, y:y, w:0.5, h:0.5, fill:{color:BRAND.navy} });
+    slide.addText(String(i+1), { x:0.5, y:y, w:0.5, h:0.5, fontFace:'Open Sans', fontSize:14, bold:true, color:BRAND.white, align:'center', valign:'middle' });
+    slide.addText(s.leg, { x:1.2, y:y-0.02, w:8.4, h:0.5, fontFace:'Open Sans', fontSize:13, color:BRAND.ink, valign:'middle' });
+    slide.addText([s.date, s.nights].filter(Boolean).join('  •  '), { x:9.8, y:y-0.02, w:3.0, h:0.5, fontFace:'Open Sans', fontSize:11, color:BRAND.cyan, valign:'middle', align:'right' });
+    y += 0.65;
+  });
+  footer(slide, destination);
+}
+
+function buildLogisticsSlide(pres, l, destination){
+  const slide = pres.addSlide();
+  slide.background = { color: BRAND.white };
+  slide.addText(l.title, { x:0.5, y:0.4, w:12.3, h:0.7, fontFace:'Nunito', fontSize:24, bold:true, color:BRAND.ink });
+
+  const cols = 2;
+  const gap = 0.3;
+  const cardW = (12.3 - gap) / cols;
+  const cardH = 2.4;
+  l.items.forEach((item, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const x = 0.5 + col*(cardW+gap);
+    const y = 1.4 + row*(cardH+gap);
+    slide.addShape('roundRect', { x, y, w:cardW, h:cardH, fill:{color:'F4F8FC'}, line:{color:'DCE8F5', width:1}, rectRadius:0.12 });
+    slide.addText(item.topic.toUpperCase(), { x:x+0.25, y:y+0.2, w:cardW-0.5, h:0.4, fontFace:'Open Sans', fontSize:12, bold:true, color:BRAND.navy });
+    slide.addText(item.answer, { x:x+0.25, y:y+0.65, w:cardW-0.5, h:cardH-0.9, fontFace:'Open Sans', fontSize:12, color:BRAND.ink, valign:'top' });
+  });
+  footer(slide, destination);
+}
+</script>
+
+</body>
+</html>
